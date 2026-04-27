@@ -41,7 +41,43 @@ body {
 <div class="container" id="menu"></div>
 
 <script>
-document.getElementById("menu").innerHTML = "Det funkar!";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5ElTRzlAegjM_CwuIhx1OOC8r68XUQfM691XaDxw51y8vAv6plXOZvAMjebgf4n-T97FuImVbjvlU/pub?gid=445956250&single=true&output=csv";
+
+async function loadMenu() {
+  const res = await fetch(sheetURL);
+  const text = await res.text();
+
+  const rows = text.split("\n").slice(1);
+  const container = document.getElementById("menu");
+  container.innerHTML = "";
+
+  rows.forEach(row => {
+    if (!row.trim()) return;
+
+    // Klarar både , och ;
+    const cols = row.includes(";") ? row.split(";") : row.split(",");
+
+    const [tap, active, name, style, abv, price, image] = cols;
+
+    if (active !== "TRUE") return;
+
+    const div = document.createElement("div");
+    div.className = "beer";
+
+    div.innerHTML = `
+      <img src="${image.trim()}">
+      <div>
+        <div class="name">${tap}. ${name}</div>
+        <div class="meta">${style} • ${abv} • ${price}</div>
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+loadMenu();
+setInterval(loadMenu, 30000);
 </script>
 
 </body>
