@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Tap List</title>
+
 <style>
 body {
   margin: 0;
@@ -13,43 +14,54 @@ body {
   cursor: none;
   overflow: hidden;
 }
+
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(20, 12, 8, 0.6);
+  background: rgba(20, 12, 8, 0.65);
   z-index: -1;
 }
-  
+
 .container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 kolumner */
-  grid-template-rows: repeat(6, 1fr);    /* 6 rader */
-  gap: 20px;
-  padding: 40px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 25px;
+  padding: 50px;
   height: 100vh;
   box-sizing: border-box;
 }
-  
-..beer {
+
+.beer {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
+
 .beer img {
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
 }
+
+.text {
+  display: flex;
+  flex-direction: column;
+}
+
 .name {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: bold;
+  line-height: 1.1;
 }
 
 .meta {
   font-size: 20px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 </style>
+
 </head>
 <body>
 
