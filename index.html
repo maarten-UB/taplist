@@ -62,8 +62,15 @@ body::before {
 .meta {
   font-size: 26px;
   color: #ffffff;
+  margin-top: 2px;
+}
+.price {
+  font-size: 26px;
+  color: #f5d76e;
+  margin-top: 4px;
 }
 </style>
+
 
 </head>
 <body>
@@ -133,7 +140,12 @@ async function loadMenu() {
       <img src="${(beer.image || "").trim()}">
       <div class="text">
         <div class="name">${beer.name || ""}</div>
-        <div class="meta">${beer.style || ""} • ${beer.abv || ""} • ${beer.price || ""}</div>
+        <div class="meta">
+          ${beer.style || ""}
+          ${beer.style && beer.abv ? " • " : ""}
+          ${beer.abv || ""}
+        </div>
+        <div class="price">${beer.price || ""}</div>
       </div>
     `;
 
