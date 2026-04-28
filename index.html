@@ -1,90 +1,149 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Taplist</title>
+<meta charset="UTF-8">
+<title>Tap List</title>
 
-  <style>
-    body {
-      background: #1a120d;
-      color: #f5e9dc;
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
+<style>
+body {
+  margin: 0;
+  background: url("https://raw.githubusercontent.com/maarten-UB/taplist/main/joshua-bartell-6vvIBTvL90A-unsplash.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #f5f1e8;
+  font-family: sans-serif;
+  cursor: none;
+  overflow: hidden;
+}
 
-    .beer {
-      margin-bottom: 30px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 8, 0.65);
+  z-index: -1;
+}
 
-    .beer-name {
-      font-size: 32px;
-      font-weight: bold;
-    }
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 12px;
+  padding: 40px;
+  height: 100vh;
+  box-sizing: border-box;
+}
 
-    .beer-style {
-      font-size: 22px;
-      opacity: 0.85;
-    }
+.beer img {
+  width: 160px;
+  height: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
 
-    .beer-abv,
-    .beer-price {
-      font-size: 20px;
-    }
-  </style>
+.beer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 40px;
+  font-weight: bold;
+  color: #f5d76e;
+  line-height: 1.1;
+}
+
+.meta {
+  font-size: 26px;
+  color: #ffffff;
+}
+</style>
+
 </head>
-
 <body>
 
-<div id="menu">Laddar...</div>
+<div class="container" id="menu"></div>
 
+<!-- ✅ CSV-parser -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5ElTRzlAegjM_CwuIhx1OOC8r68XUQfM691XaDxw51y8vAv6plXOZvAMjebgf4n-T97FuImVbjvlU/pub?gid=445956250&single=true&output=csv";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5ElTRzlAegjM_CwuIhx1OOC8r68XUQfM691XaDxw51y8vAv6plXOZvAMjebgf4n-T97FuImVbjvlU/pub?gid=445956250&single=true&output=csv";
 
-async function loadBeers() {
-  const res = await fetch(CSV_URL);
+async function loadMenu() {
+  const res = await fetch(sheetURL + "&t=" + Date.now(), {
+    cache: "no-store"
+  });
   const text = await res.text();
 
+  // ✅ RIKTIG CSV parsing
   const parsed = Papa.parse(text, {
     skipEmptyLines: true
   });
 
-  const rows = parsed.data;
-
-  const menu = document.getElementById("menu");
-  menu.innerHTML = "";
-
-  rows.slice(1).forEach(row => {
-    if (!row[2]) return;
-
-    const beer = {
-      name: row[2],
-      style: row[3],
-      abv: row[4],
-      price: row[5]
+  let beers = parsed.data.slice(1).map(cols => {
+    const [tap, active, name, style, abv, price, image] = cols;
+    return {
+      tap,
+      active,
+      name,
+      style,
+      abv,
+      price,
+      image
     };
+  });
 
+  // Filtrera aktiva
+  beers = beers.filter(b => b.active === "TRUE");
+
+  // Sortera efter tappnummer
+  beers.sort((a, b) => Number(a.tap) - Number(b.tap));
+
+  // Kolumnvis layout
+  const columns = [[], [], []];
+  beers.forEach((beer, i) => {
+    const colIndex = Math.floor(i / 6);
+    if (columns[colIndex]) columns[colIndex].push(beer);
+  });
+
+  const ordered = [];
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 3; col++) {
+      if (columns[col][row]) {
+        ordered.push(columns[col][row]);
+      }
+    }
+  }
+
+  const container = document.getElementById("menu");
+  container.innerHTML = "";
+
+  ordered.forEach(beer => {
     const div = document.createElement("div");
     div.className = "beer";
 
     div.innerHTML = `
-      <div class="beer-name">${beer.name}</div>
-      <div class="beer-style">${beer.style}</div>
-      <div class="beer-abv">${beer.abv}</div>
-      <div class="beer-price">${beer.price}</div>
+      <img src="${(beer.image || "").trim()}">
+      <div class="text">
+        <div class="name">${beer.name || ""}</div>
+        <div class="meta">${beer.style || ""} • ${beer.abv || ""} • ${beer.price || ""}</div>
+      </div>
     `;
 
-    menu.appendChild(div);
+    container.appendChild(div);
   });
 }
 
-loadBeers();
-setInterval(loadBeers, 60000);
+loadMenu();
+setInterval(loadMenu, 30000);
 </script>
-
 
 </body>
 </html>
