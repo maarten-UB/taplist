@@ -35,24 +35,26 @@ body::before {
 
 .beer img {
   height: 100%;
-  max-height: 130px;  /* justera denna för max size */
+  max-height: 130px;
   width: auto;
+  flex-shrink: 0;     /* 🔥 superviktigt */
   object-fit: contain;
 }
 
-.beer img {
-  height: 100%;     /* fyller hela radens höjd */
-  width: auto;
-  max-width: 120px; /* skyddar så den inte blir för bred */
-  object-fit: contain;
+.beer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  width: 100%;        /* 🔥 viktigt */
 }
 
 .text {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;       /* 🔥 fixar overflow-buggar */
 }
-
 .name {
   font-size: 36px;
   font-weight: bold;
