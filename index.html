@@ -32,52 +32,57 @@
     .beer-price {
       font-size: 20px;
     }
-
-    /* DEBUG (valfri) */
-    .label {
-      opacity: 0.6;
-      font-size: 14px;
-    }
   </style>
 </head>
 
 <body>
 
-  <div id="menu"></div>
+<div id="menu">Laddar...</div>
 
-  <script>
-    // TESTDATA (ersätt senare med Sheets)
-    const beers = [
-      {
-        name: "Road Trip",
-        style: "Alkoholfri IPA",
-        abv: "0,3%",
-        price: "65 kr"
-      },
-      {
-        name: "Hazy Days",
-        style: "New England IPA",
-        abv: "6,5%",
-        price: "89 kr"
-      }
-    ];
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5ElTRzlAegjM_CwuIhx1OOC8r68XUQfM691XaDxw51y8vAv6plXOZvAMjebgf4n-T97FuImVbjvlU/pub?gid=445956250&single=true&output=csv";
 
-    const menu = document.getElementById("menu");
+async function loadBeers() {
+  const res = await fetch(CSV_URL);
+  const text = await res.text();
 
-    beers.forEach(beer => {
-      const div = document.createElement("div");
-      div.className = "beer";
+  const rows = text.split("\n").map(r => r.split(","));
 
-      div.innerHTML = `
-        <div class="beer-name">${beer.name}</div>
-        <div class="beer-style">${beer.style}</div>
-        <div class="beer-abv">${beer.abv}</div>
-        <div class="beer-price">${beer.price}</div>
-      `;
+  const menu = document.getElementById("menu");
+  menu.innerHTML = "";
 
-      menu.appendChild(div);
-    });
-  </script>
+  // Antag kolumner:
+  // A = namn, B = stil, C = ABV, D = pris
+
+  rows.slice(1).forEach(row => {
+    if (!row[0]) return;
+
+    const beer = {
+      name: row[0],
+      style: row[1],
+      abv: row[2],
+      price: row[3]
+    };
+
+    const div = document.createElement("div");
+    div.className = "beer";
+
+    div.innerHTML = `
+      <div class="beer-name">${beer.name}</div>
+      <div class="beer-style">${beer.style}</div>
+      <div class="beer-abv">${beer.abv}</div>
+      <div class="beer-price">${beer.price}</div>
+    `;
+
+    menu.appendChild(div);
+  });
+}
+
+loadBeers();
+
+// Auto-refresh var 60 sek
+setInterval(loadBeers, 60000);
+</script>
 
 </body>
 </html>
