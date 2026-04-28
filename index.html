@@ -72,7 +72,9 @@ body::before {
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5ElTRzlAegjM_CwuIhx1OOC8r68XUQfM691XaDxw51y8vAv6plXOZvAMjebgf4n-T97FuImVbjvlU/pub?gid=445956250&single=true&output=csv";
 
 async function loadMenu() {
-  const res = await fetch(sheetURL);
+  const res = await fetch(sheetURL + "&t=" + Date.now(), {
+  cache: "no-store"
+});
   const text = await res.text();
 
   const rows = text.split("\n").slice(1).filter(r => r.trim());
