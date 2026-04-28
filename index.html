@@ -20,30 +20,33 @@ body::before {
   background: rgba(20, 12, 8, 0.6);
   z-index: -1;
 }
+  
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr); /* 3 kolumner */
+  grid-template-rows: repeat(6, 1fr);    /* 6 rader */
   gap: 20px;
   padding: 40px;
   height: 100vh;
   box-sizing: border-box;
 }
-.beer {
+  
+..beer {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 .beer img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
+  width: 60px;
+  height: 60px;
 }
 .name {
-  font-size: 50px;
+  font-size: 32px;
   font-weight: bold;
 }
+
 .meta {
-  font-size: 30px;
+  font-size: 20px;
   opacity: 0.8;
 }
 </style>
