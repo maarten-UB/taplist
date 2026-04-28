@@ -27,38 +27,39 @@ body::before {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(6, 1fr);
-  gap: 25px;
-  padding: 50px;
+  gap: 8px;              /* minimalt mellanrum */
+  padding: 30px;
   height: 100vh;
   box-sizing: border-box;
 }
 
-.beer {
-  display: flex;
+..beer {
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 20px;
+  height: 100%;
 }
 
 .beer img {
-  width: 110px;
-  height: 110px;
+  height: 100%;     /* fyller hela radens höjd */
+  width: auto;
+  max-width: 120px; /* skyddar så den inte blir för bred */
   object-fit: contain;
 }
 
 .text {
-  display: flex;
-  flex-direction: column;
+  padding-left: 10px;
 }
 
 .name {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: bold;
-  line-height: 1.05;
+  line-height: 1.1;
 }
 
 .meta {
   font-size: 18px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 </style>
 
