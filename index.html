@@ -58,10 +58,10 @@ async function loadBeers() {
     if (!row[0]) return;
 
     const beer = {
-      name: row[0],
-      style: row[1],
-      abv: row[2],
-      price: row[3]
+      name: row[2],
+      style: row[3],
+      abv: row[4],
+      price: row[5]
     };
 
     const div = document.createElement("div");
