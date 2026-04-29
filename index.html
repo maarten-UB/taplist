@@ -91,7 +91,9 @@ async function loadMenu() {
     const [tap, active, name, style, abv, price, image] = cols;
     return { tap, active, name, style, abv, price, image };
   });
-
+  
+  console.log("Loaded beers:", beers.length);
+  
   // 🔥 fasta slots
   const slots = Array(18).fill(null);
 
