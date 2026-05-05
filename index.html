@@ -13,10 +13,6 @@ body {
   font-family: sans-serif;
   cursor: none;
   overflow: hidden;
-
-  display: flex;              /* 🔥 NY */
-  align-items: center;        /* 🔥 vertikal centrering */
-  justify-content: center;    /* 🔥 horisontell centrering */
 }
 
 body::before {
@@ -32,12 +28,10 @@ body::before {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(6, 1fr);
   gap: 12px;
-
-  width: 100%;
-  max-width: 1600px;          /* 🔥 håller ihop layouten snyggt */
-
-  padding: 20px 40px;         /* 🔥 mindre top-padding */
+  padding: 40px;
+  height: 100vh;
   box-sizing: border-box;
+  transform: translateY(-40px);  /* justera här */
 }
 
 .beer img {
@@ -101,6 +95,9 @@ async function loadMenu() {
     return { tap, active, name, style, abv, price, image };
   });
   
+  console.log("Loaded beers:", beers.length);
+  
+  // 🔥 fasta slots
   const slots = Array(18).fill(null);
 
   beers.forEach(beer => {
