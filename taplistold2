@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tap List</title>
+
+<style>
+body {
+  margin: 0;
+  background: url("https://raw.githubusercontent.com/maarten-UB/taplist/main/joshua-bartell-6vvIBTvL90A-unsplash.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #f5f1e8;
+  font-family: sans-serif;
+  cursor: none;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 8, 0.65);
+  z-index: -1;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 12px;
+  padding: 40px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.beer img {
+  width: 160px;
+  height: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.beer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 45px;
+  font-weight: bold;
+  color: #f5d76e;
+  margin-bottom: 6px;
+}
+
+.meta {
+  font-size: 26px;
+  color: #ffffff;
+  margin-bottom: 18px;
+}
+
+.price {
+  font-size: 22px;
+  color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="menu"></div>
+
+<script>
+const SHEET_ID = "11Aa38-Z4CUSwVAECIcTD_yCMdb1TeC1rXJARUKvSdGw";
+const API_KEY = "AIzaSyBclk4wa6D0akN01_VcJX-Y2MpXehBW6ug";
+const RANGE = "Bar!A2:G19";
+
+async function loadMenu() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.values) return;
+
+  let beers = data.values.map(cols => {
+    const [tap, active, name, style, abv, price, image] = cols;
+    return { tap, active, name, style, abv, price, image };
+  });
+  
+  console.log("Loaded beers:", beers.length);
+  
+  // 🔥 fasta slots
+  const slots = Array(18).fill(null);
+
+  beers.forEach(beer => {
+    if (beer.active === "TRUE") {
+      const index = Number(beer.tap) - 1;
+      if (index >= 0 && index < 18) {
+        slots[index] = beer;
+      }
+    }
+  });
+
+  const ordered = [];
+
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 3; col++) {
+      const index = col * 6 + row;
+      ordered.push(slots[index]);
+    }
+  }
+
+  const container = document.getElementById("menu");
+  container.innerHTML = "";
+
+  ordered.forEach(beer => {
+    const div = document.createElement("div");
+    div.className = "beer";
+
+    if (!beer) {
+      container.appendChild(div);
+      return;
+    }
+
+    const meta = [beer.style, beer.abv].filter(Boolean).join(" • ");
+
+    div.innerHTML = `
+      <img src="${(beer.image || "").trim()}">
+      <div class="text">
+        <div class="name">${beer.name || ""}</div>
+        <div class="meta">${meta}</div>
+        <div class="price">${beer.price || ""}</div>
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+loadMenu();
+setInterval(loadMenu, 30000);
+</script>
+
+</body>
+</html>
